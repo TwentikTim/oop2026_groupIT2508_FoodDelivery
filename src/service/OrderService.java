@@ -1,4 +1,4 @@
-package services;
+package service;
 
 import edu.aitu.oop3.entities.Order;
 import edu.aitu.oop3.entities.OrderStatus;
