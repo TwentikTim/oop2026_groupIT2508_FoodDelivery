@@ -1,4 +1,4 @@
-package service;
+package edu.aitu.oop3.service;
 
 import edu.aitu.oop3.entities.MenuItem;
 import edu.aitu.oop3.exceptions.MenuItemNotAvailableException;
