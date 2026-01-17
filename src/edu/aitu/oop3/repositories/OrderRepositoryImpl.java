@@ -3,12 +3,8 @@ package edu.aitu.oop3.repositories;
 import edu.aitu.oop3.db.IDB;
 import edu.aitu.oop3.entities.Order;
 import edu.aitu.oop3.entities.OrderStatus;
-import edu.aitu.oop3.exceptions.OrderNotFoundException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,91 +17,87 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public int create(Order order) {
-        String sql = "INSERT INTO orders(customer_id, status) VALUES (?, ?) RETURNING id";
+    public int create(int customerId) {
+        String sql =
+                "INSERT INTO orders(customer_id, status) VALUES (?, ?) RETURNING id";
 
         try (Connection con = db.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, order.getCustomerId());
-            ps.setString(2, order.getStatus().name());
+            ps.setInt(1, customerId);
+            ps.setString(2, OrderStatus.COOKING.name());
 
             ResultSet rs = ps.executeQuery();
             rs.next();
             return rs.getInt("id");
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to create an order", e);
+            throw new RuntimeException("Failed to create order", e);
         }
     }
 
     @Override
     public Order findById(int id) {
-        String sql = "SELECT id, customer_id, status FROM orders WHERE id = ?";
+        String sql = "SELECT * FROM orders WHERE id = ?";
 
         try (Connection con = db.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) {
-                    throw new OrderNotFoundException(id);
-                }
-                return mapOrder(rs);
+            if (rs.next()) {
+                return new Order(
+                        rs.getInt("id"),
+                        rs.getInt("customer_id"),
+                        OrderStatus.valueOf(rs.getString("status"))
+                );
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Failed to find the order by id", e);
+            throw new RuntimeException(e);
         }
+
+        return null;
     }
 
     @Override
-    public List<Order> findActiveOrders() {
-        String sql = "SELECT id, customer_id, status FROM orders WHERE status <> 'DELIVERED' ORDER BY id";
-
+    public List<Order> findActive() {
         List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM orders WHERE status != 'DELIVERED'";
 
         try (Connection con = db.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             Statement st = con.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                orders.add(mapOrder(rs));
+                orders.add(new Order(
+                        rs.getInt("id"),
+                        rs.getInt("customer_id"),
+                        OrderStatus.valueOf(rs.getString("status"))
+                ));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error while getting active orders", e);
+            throw new RuntimeException(e);
         }
 
         return orders;
     }
 
     @Override
-    public void updateStatus(int orderId, OrderStatus status) {
+    public void updateStatus(int id, OrderStatus status) {
         String sql = "UPDATE orders SET status = ? WHERE id = ?";
 
         try (Connection con = db.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, status.name()); // enum -> String
-            ps.setInt(2, orderId);
-
-            int rows = ps.executeUpdate();
-            if (rows == 0) {
-                throw new OrderNotFoundException(orderId);
-            }
+            ps.setString(1, status.name());
+            ps.setInt(2, id);
+            ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error while updating order status", e);
+            throw new RuntimeException(e);
         }
-    }
-
-    private Order mapOrder(ResultSet rs) throws SQLException {
-        int id = rs.getInt("id");
-        int customerId = rs.getInt("customer_id");
-        OrderStatus status = OrderStatus.valueOf(rs.getString("status"));
-
-        return new Order(id, customerId, status);
     }
 }

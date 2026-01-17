@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface OrderRepository {
 
-    int create(Order order);
+    int create(int customerId);
 
     Order findById(int id);
 
-    List<Order> findActiveOrders();
+    List<Order> findActive();
 
-    void updateStatus(int orderId, OrderStatus status);
+    void updateStatus(int id, OrderStatus status);
 }

@@ -11,7 +11,7 @@ public class MenuService {
         }
 
         if (!item.isAvailable()) {
-            throw new MenuItemNotAvailableException(item.getId(), item.getName());
+            throw new MenuItemNotAvailableException(item.getName());
         }
     }
 }
