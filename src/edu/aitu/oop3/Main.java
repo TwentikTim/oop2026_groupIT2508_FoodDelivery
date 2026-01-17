@@ -4,11 +4,13 @@ import edu.aitu.oop3.db.DatabaseConnection;
 import edu.aitu.oop3.db.IDB;
 import edu.aitu.oop3.entities.Customer;
 import edu.aitu.oop3.entities.MenuItem;
+import edu.aitu.oop3.entities.Order;
 import edu.aitu.oop3.entities.OrderStatus;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -52,8 +54,6 @@ public class Main {
         }
     }
 
-
-
     private static void orderFood(
             Scanner sc,
             CustomerRepository customerRepo,
@@ -76,25 +76,22 @@ public class Main {
 
         while (true) {
 
-
             if (currentItemId == null) {
                 showMenu(menuRepo);
                 System.out.print("Choose item: ");
                 int chosen = readInt(sc);
 
-                if (menuRepo.findById(chosen) == null) {
+                MenuItem item = menuRepo.findById(chosen);
+                if (item == null) {
                     System.out.println("Invalid menu item.");
                     continue;
                 }
-
-                if (!menuRepo.findById(chosen).isAvailable()) {
+                if (!item.isAvailable()) {
                     System.out.println("This item is not available.");
                     continue;
                 }
-
                 currentItemId = chosen;
             }
-
 
             System.out.print("Enter quantity: ");
             int quantity = readInt(sc);
@@ -105,7 +102,6 @@ public class Main {
             }
 
             orderService.addItemToOrder(orderId, currentItemId, quantity);
-
 
             while (true) {
                 System.out.println("\nAnything else?");
@@ -122,8 +118,9 @@ public class Main {
                     return;
                 }
 
-                if (menuRepo.findById(next) != null) {
-                    if (!menuRepo.findById(next).isAvailable()) {
+                MenuItem nextItem = menuRepo.findById(next);
+                if (nextItem != null) {
+                    if (!nextItem.isAvailable()) {
                         System.out.println("This item is not available.");
                         continue;
                     }
@@ -136,8 +133,6 @@ public class Main {
         }
     }
 
-
-
     private static void checkStatus(Scanner sc, OrderService orderService) {
         System.out.print("Enter order ID: ");
         int orderId = readInt(sc);
@@ -146,10 +141,10 @@ public class Main {
             System.out.println("Order status: " + orderService.getStatus(orderId));
         } catch (OrderNotFoundException e) {
             System.out.println(e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Database error. Try again.");
         }
     }
-
-
 
     private static void adminMenu(
             Scanner sc,
@@ -176,6 +171,7 @@ public class Main {
             int choice = readInt(sc);
 
             switch (choice) {
+
                 case 1 -> showMenu(menuRepo);
 
                 case 2 -> {
@@ -200,38 +196,75 @@ public class Main {
                     }
                 }
 
-                case 3 -> orderService.getActiveOrders()
-                        .forEach(o -> System.out.println(
-                                "Order ID: " + o.getId() +
-                                        ", Customer ID: " + o.getCustomerId() +
-                                        ", Status: " + o.getStatus()
-                        ));
+                case 3 -> {
+                    try {
+                        List<Order> orders = orderService.getActiveOrders();
+                        if (orders.isEmpty()) {
+                            System.out.println("There is no active orders");
+                        } else {
+                            for (Order o : orders) {
+                                System.out.println(
+                                        "Order ID: " + o.getId() +
+                                                ", Customer ID: " + o.getCustomerId() +
+                                                ", Status: " + o.getStatus()
+                                );
+                            }
+                        }
+                    } catch (RuntimeException e) {
+                        System.out.println("Database error. Try again.");
+                    }
+                }
 
                 case 4 -> {
-                    System.out.print("Enter order ID: ");
-                    int orderId = readInt(sc);
+                    try {
+                        List<Order> active = orderService.getActiveOrders();
+                        if (active.isEmpty()) {
+                            System.out.println("There is no order at the time");
+                            continue;
+                        }
 
-                    System.out.println("1. COOKING");
-                    System.out.println("2. ON_THE_WAY");
-                    System.out.println("3. DELIVERED");
-                    System.out.print("Choose status: ");
+                        System.out.print("Enter order ID: ");
+                        int orderId = readInt(sc);
 
-                    int s = readInt(sc);
+                        boolean exists = false;
+                        for (Order o : active) {
+                            if (o.getId() == orderId) {
+                                exists = true;
+                                break;
+                            }
+                        }
+                        if (!exists) {
+                            System.out.println("There is no order at the time");
+                            continue;
+                        }
 
-                    OrderStatus status = switch (s) {
-                        case 1 -> OrderStatus.COOKING;
-                        case 2 -> OrderStatus.ON_THE_WAY;
-                        case 3 -> OrderStatus.DELIVERED;
-                        default -> null;
-                    };
+                        System.out.println("1. COOKING");
+                        System.out.println("2. ON_THE_WAY");
+                        System.out.println("3. DELIVERED");
+                        System.out.print("Choose status: ");
 
-                    if (status == null) {
-                        System.out.println("Invalid status.");
-                        continue;
+                        int s = readInt(sc);
+
+                        OrderStatus status = switch (s) {
+                            case 1 -> OrderStatus.COOKING;
+                            case 2 -> OrderStatus.ON_THE_WAY;
+                            case 3 -> OrderStatus.DELIVERED;
+                            default -> null;
+                        };
+
+                        if (status == null) {
+                            System.out.println("Invalid status.");
+                            continue;
+                        }
+
+                        orderService.updateStatus(orderId, status);
+                        System.out.println("Status updated.");
+
+                    } catch (OrderNotFoundException e) {
+                        System.out.println("There is no order at the time");
+                    } catch (RuntimeException e) {
+                        System.out.println("Database error. Try again.");
                     }
-
-                    orderService.updateStatus(orderId, status);
-                    System.out.println("Status updated.");
                 }
 
                 case 0 -> {
@@ -242,8 +275,6 @@ public class Main {
             }
         }
     }
-
-
 
     private static void showMenu(MenuItemRepository repo) {
         System.out.println("\nMenu:");
