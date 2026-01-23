@@ -5,11 +5,6 @@ public class Order {
     private int customerId;
     private OrderStatus status;
 
-    public Order(int customerId, OrderStatus status) {
-        this.customerId = customerId;
-        this.status = status;
-    }
-
     public Order(int id, int customerId, OrderStatus status) {
         this.id = id;
         this.customerId = customerId;
@@ -28,11 +23,4 @@ public class Order {
         return status;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
 }

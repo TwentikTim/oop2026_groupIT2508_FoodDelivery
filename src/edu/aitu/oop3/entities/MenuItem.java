@@ -27,14 +27,7 @@ public class MenuItem {
         return available;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() {return name;}
 
-    public double getPrice() {
-        return price;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
+    public double getPrice() {return price;}
 }

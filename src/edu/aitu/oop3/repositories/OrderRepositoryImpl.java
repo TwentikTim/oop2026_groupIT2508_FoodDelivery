@@ -25,7 +25,7 @@ public class OrderRepositoryImpl implements OrderRepository {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, customerId);
-            ps.setString(2, OrderStatus.COOKING.name());
+            ps.setString(2, OrderStatus.PENDING_PAYMENT.name());
 
             ResultSet rs = ps.executeQuery();
             rs.next();
@@ -53,18 +53,18 @@ public class OrderRepositoryImpl implements OrderRepository {
                         OrderStatus.valueOf(rs.getString("status"))
                 );
             }
+            return  null;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return null;
     }
 
     @Override
     public List<Order> findActive() {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT * FROM orders WHERE status != 'DELIVERED'";
+        String sql = "SELECT * FROM orders WHERE status IN ('COOKING','ON_THE_WAY') ORDER BY id";
 
         try (Connection con = db.getConnection();
              Statement st = con.createStatement();
@@ -77,12 +77,10 @@ public class OrderRepositoryImpl implements OrderRepository {
                         OrderStatus.valueOf(rs.getString("status"))
                 ));
             }
-
+            return orders;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to list active orders", e);
         }
-
-        return orders;
     }
 
     @Override
@@ -97,7 +95,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to update status", e);
         }
     }
 }

@@ -33,17 +33,12 @@ public class OrderService {
     }
 
     public void addItemToOrder(int orderId, int menuItemId, int quantity) {
+        if (quantity <= 0) throw new InvalidQuantityException();
 
-        if (quantity <= 0) {
-            throw new InvalidQuantityException();
-        }
 
         MenuItem item = menuRepo.findById(menuItemId);
-
         if (item == null || !item.isAvailable()) {
-            throw new MenuItemNotAvailableException(
-                    item == null ? "Unknown item" : item.getName()
-            );
+            throw new MenuItemNotAvailableException(item == null ? "Unknown item" : item.getName());
         }
 
         orderItemRepo.add(orderId, menuItemId, quantity);
@@ -51,9 +46,7 @@ public class OrderService {
 
     public OrderStatus getStatus(int orderId) {
         Order order = orderRepo.findById(orderId);
-        if (order == null) {
-            throw new OrderNotFoundException(orderId);
-        }
+        if (order == null) throw new OrderNotFoundException(orderId);
         return order.getStatus();
     }
 
@@ -62,9 +55,18 @@ public class OrderService {
     }
 
     public void updateStatus(int orderId, OrderStatus status) {
-        if (orderRepo.findById(orderId) == null) {
-            throw new OrderNotFoundException(orderId);
-        }
+        if (orderRepo.findById(orderId) == null) throw new OrderNotFoundException(orderId);
         orderRepo.updateStatus(orderId, status);
+    }
+
+    public Order getOrderOrThrow(int orderId) {
+        Order o = orderRepo.findById(orderId);
+        if (o == null) throw new OrderNotFoundException(orderId);
+        return o;
+    }
+
+    public double calculateTotal(int orderId) {
+        getOrderOrThrow(orderId);
+        return orderItemRepo.calculateTotal(orderId);
     }
 }

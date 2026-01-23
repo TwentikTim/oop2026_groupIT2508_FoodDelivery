@@ -6,9 +6,11 @@ import edu.aitu.oop3.entities.Customer;
 import edu.aitu.oop3.entities.MenuItem;
 import edu.aitu.oop3.entities.Order;
 import edu.aitu.oop3.entities.OrderStatus;
+import edu.aitu.oop3.exceptions.InsufficientBalanceException;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
+import edu.aitu.oop3.service.PaymentService;
 
 import java.util.List;
 import java.util.Scanner;
@@ -26,8 +28,8 @@ public class Main {
         OrderRepository orderRepo = new OrderRepositoryImpl(db);
         OrderItemRepository orderItemRepo = new OrderItemRepositoryImpl(db);
 
-        OrderService orderService =
-                new OrderService(orderRepo, menuRepo, orderItemRepo);
+        OrderService orderService = new OrderService(orderRepo, menuRepo, orderItemRepo);
+        PaymentService paymentService = new PaymentService(customerRepo, orderRepo);
 
         Scanner sc = new Scanner(System.in);
 
@@ -35,7 +37,9 @@ public class Main {
             System.out.println("\nFood Delivery");
             System.out.println("1. Order Food");
             System.out.println("2. Check Order Status");
-            System.out.println("3. Admin Menu");
+            System.out.println("3. Add Money");
+            System.out.println("4. Pay for Order");
+            System.out.println("5. Admin Menu");
             System.out.println("0. Exit");
             System.out.print("Enter: ");
 
@@ -44,7 +48,9 @@ public class Main {
             switch (choice) {
                 case 1 -> orderFood(sc, customerRepo, menuRepo, orderService);
                 case 2 -> checkStatus(sc, orderService);
-                case 3 -> adminMenu(sc, menuRepo, orderService);
+                case 3 -> addMoney(sc, orderService,paymentService);
+                case 4 -> payOrder(sc, orderService, paymentService);
+                case 5 -> adminMenu(sc, menuRepo, orderService);
                 case 0 -> {
                     System.out.println("Goodbye.");
                     return;
@@ -112,9 +118,12 @@ public class Main {
                 int next = readInt(sc);
 
                 if (next == 5) {
-                    System.out.println("Order created successfully.");
+                    double total = orderService.calculateTotal(orderId);
+                    System.out.println("Order waiting for payment.");
                     System.out.println("Your order ID: " + orderId);
-                    System.out.println("Current status: COOKING");
+                    System.out.println("Status:" + OrderStatus.PENDING_PAYMENT);
+                    System.out.println("Total price: " + total);
+                    System.out.println("Use 3 to add money and menu 4 to pay");
                     return;
                 }
 
@@ -145,6 +154,50 @@ public class Main {
             System.out.println("Database error. Try again.");
         }
     }
+
+    private static void addMoney(Scanner sc, OrderService orderService,PaymentService paymentService) {
+        System.out.println("Enter order ID: ");
+        int orderId = readInt(sc);
+
+        try {
+            Order order = orderService.getOrderOrThrow(orderId);
+
+            System.out.println("Enter amount: ");
+            double amount = readDouble(sc);
+            if (amount <= 0) {
+                System.out.println("Invalid amount.");
+                return;
+            }
+
+            paymentService.addMoneyByOrderId(order, amount);
+            System.out.println("Money added successfully.");
+        } catch (OrderNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Database error. Try again.");
+        }
+    }
+
+    private static void payOrder(Scanner sc, OrderService orderService, PaymentService paymentService) {
+        System.out.println("Enter Order ID: ");
+        int orderId = readInt(sc);
+
+        try {
+            Order order = orderService.getOrderOrThrow(orderId);
+            double total = orderService.calculateTotal(orderId);
+
+            System.out.println("Total price: " + total);
+
+            paymentService.pay(order, total);
+            System.out.println("Payment successful. Order placed");
+            System.out.println("Current Status:" + OrderStatus.COOKING);
+        } catch (OrderNotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Database error. Try again.");
+        }
+    }
+
 
     private static void adminMenu(
             Scanner sc,
@@ -295,5 +348,14 @@ public class Main {
         }
         return sc.nextInt();
     }
+
+    private static double readDouble(Scanner sc) {
+        while (!sc.hasNextDouble()) {
+            sc.next();
+            System.out.println("Enter a number: ");
+        }
+        return sc.nextDouble();
+    }
+
 }
 //test

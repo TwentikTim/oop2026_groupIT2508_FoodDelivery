@@ -4,7 +4,8 @@ import edu.aitu.oop3.db.IDB;
 import edu.aitu.oop3.entities.MenuItem;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuItemRepositoryImpl implements MenuItemRepository {
 
@@ -17,38 +18,49 @@ public class MenuItemRepositoryImpl implements MenuItemRepository {
     @Override
     public List<MenuItem> findAll() {
         List<MenuItem> items = new ArrayList<>();
-        String sql = "SELECT * FROM menu_items";
+        String sql = "SELECT id, name, price, available FROM menu_items ORDER BY id";
 
         try (Connection con = db.getConnection();
              Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                items.add(map(rs));
+                items.add(new MenuItem(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getBoolean("available")
+                ));
             }
+            return items;
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to list menu items", e);
         }
-
-        return items;
     }
 
     @Override
     public MenuItem findById(int id) {
-        String sql = "SELECT * FROM menu_items WHERE id = ?";
+        String sql = "SELECT id, name, price, available FROM menu_items WHERE id = ?";
 
         try (Connection con = db.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return map(rs);
+            if (rs.next()) {
+                return new MenuItem(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getBoolean("available")
+                );
+            }
+            return null;
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to find menu item", e);
         }
-        return null;
     }
 
     @Override
@@ -63,16 +75,7 @@ public class MenuItemRepositoryImpl implements MenuItemRepository {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to update availability", e);
         }
-    }
-
-    private MenuItem map(ResultSet rs) throws SQLException {
-        return new MenuItem(
-                rs.getInt("id"),
-                rs.getString("name"),
-                rs.getDouble("price"),
-                rs.getBoolean("available")
-        );
     }
 }
