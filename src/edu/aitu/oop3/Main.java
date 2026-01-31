@@ -10,6 +10,7 @@ import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
 import edu.aitu.oop3.service.PaymentService;
+import edu.aitu.oop3.util.Result;
 
 import java.util.List;
 import java.util.Scanner;
@@ -249,27 +250,36 @@ public class Main {
                 }
 
                 case 3 -> {
-                    try {
-                        List<Order> orders = orderService.getActiveOrders();
+                    Result<List<Order>> result = orderService.getActiveOrders();
+
+                    if (result.isSuccess()) {
+                        List<Order> orders = result.getData();
                         if (orders.isEmpty()) {
-                            System.out.println("There is no active orders");
+                            System.out.println("No active orders.");
                         } else {
-                            for (Order o : orders) {
+                            for (Order o : orders){
                                 System.out.println(
-                                        "Order ID: " + o.getId() +
+                                        "Order Id: " + o.getId() +
                                                 ", Customer ID: " + o.getCustomerId() +
                                                 ", Status: " + o.getStatus()
                                 );
                             }
                         }
-                    } catch (RuntimeException e) {
-                        System.out.println("Database error. Try again.");
+                    } else {
+                        System.out.println(result.getError());
                     }
                 }
 
                 case 4 -> {
                     try {
-                        List<Order> active = orderService.getActiveOrders();
+                        Result<List<Order>> activeResult = orderService.getActiveOrders();
+
+                        if (!activeResult.isSuccess()) {
+                            System.out.println(activeResult.getError());
+                            continue;
+                        }
+
+                        List<Order> active = activeResult.getData();
                         if (active.isEmpty()) {
                             System.out.println("There is no order at the time");
                             continue;
@@ -286,7 +296,7 @@ public class Main {
                             }
                         }
                         if (!exists) {
-                            System.out.println("There is no order at the time");
+                            System.out.println("Order with this ID does not exist.");
                             continue;
                         }
 

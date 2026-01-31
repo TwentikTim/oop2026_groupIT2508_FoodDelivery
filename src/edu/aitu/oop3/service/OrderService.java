@@ -10,6 +10,8 @@ import edu.aitu.oop3.repositories.MenuItemRepository;
 import edu.aitu.oop3.repositories.OrderItemRepository;
 import edu.aitu.oop3.repositories.OrderRepository;
 
+import edu.aitu.oop3.util.Result;
+
 import java.util.List;
 
 public class OrderService {
@@ -26,6 +28,12 @@ public class OrderService {
         this.orderRepo = orderRepo;
         this.menuRepo = menuRepo;
         this.orderItemRepo = orderItemRepo;
+    }
+
+
+    public Result<List<Order>> getActiveOrders(){
+        List<Order> orders = orderRepo.findActive();
+        return Result.success(orders);
     }
 
     public int createOrder(int customerId) {
@@ -50,9 +58,6 @@ public class OrderService {
         return order.getStatus();
     }
 
-    public List<Order> getActiveOrders() {
-        return orderRepo.findActive();
-    }
 
     public void updateStatus(int orderId, OrderStatus status) {
         if (orderRepo.findById(orderId) == null) throw new OrderNotFoundException(orderId);
