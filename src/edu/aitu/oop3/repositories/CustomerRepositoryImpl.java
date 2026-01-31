@@ -30,28 +30,6 @@ public class CustomerRepositoryImpl implements CustomerRepository {
         }
     }
 
-    @Override
-    public Customer findById(int id) {
-        String sql = "SELECT id, name, balance FROM customers WHERE id = ?";
-
-        try (Connection con = db.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return new Customer(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getDouble("balance")
-                );
-            }
-            return null;
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to read customer", e);
-        }
-    }
 
     @Override
     public double getBalance(int customerId) {

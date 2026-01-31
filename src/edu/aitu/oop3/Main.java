@@ -6,7 +6,6 @@ import edu.aitu.oop3.entities.Customer;
 import edu.aitu.oop3.entities.MenuItem;
 import edu.aitu.oop3.entities.Order;
 import edu.aitu.oop3.entities.OrderStatus;
-import edu.aitu.oop3.exceptions.InsufficientBalanceException;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
@@ -194,11 +193,11 @@ public class Main {
         } catch (OrderNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Database error. Try again.");
+            System.out.println("Not enough balance.");
         }
     }
 
-
+//AdminMenu
     private static void adminMenu(
             Scanner sc,
             MenuItemRepository menuRepo,

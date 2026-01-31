@@ -6,11 +6,6 @@ public class MenuItem {
     private double price;
     private boolean available;
 
-    public MenuItem(String name, double price, boolean available) {
-        this.name = name;
-        this.price = price;
-        this.available = available;
-    }
 
     public MenuItem(int id, String name, double price, boolean available) {
         this.id = id;
