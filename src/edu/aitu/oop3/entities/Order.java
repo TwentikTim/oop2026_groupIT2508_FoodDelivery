@@ -1,14 +1,14 @@
 package edu.aitu.oop3.entities;
 
 public class Order {
-    private int id;
-    private int customerId;
-    private OrderStatus status;
+    private final int id;
+    private final int customerId;
+    private final OrderStatus status;
 
-    public Order(int id, int customerId, OrderStatus status) {
-        this.id = id;
-        this.customerId = customerId;
-        this.status = status;
+    private Order(Builder builder) {
+        this.id = builder.id;
+        this.customerId = builder.customerId;
+        this.status = builder.status;
     }
 
     public int getId() {
@@ -21,6 +21,38 @@ public class Order {
 
     public OrderStatus getStatus() {
         return status;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private int id;
+        private int customerId;
+        private OrderStatus status;
+
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder customerId(int customerId) {
+            this.customerId = customerId;
+            return this;
+        }
+
+        public Builder status(OrderStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Order build() {
+            if (customerId <= 0) {
+                throw new IllegalStateException("customerId must be set.");
+            }
+            return new Order(this);
+        }
     }
 
 }

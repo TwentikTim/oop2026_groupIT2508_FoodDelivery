@@ -47,19 +47,21 @@ public class OrderRepositoryImpl implements OrderRepository {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new Order(
-                        rs.getInt("id"),
-                        rs.getInt("customer_id"),
-                        OrderStatus.valueOf(rs.getString("status"))
-                );
+
+                return Order.builder()
+                        .id(rs.getInt("id"))
+                        .customerId(rs.getInt("customer_id"))
+                        .status(OrderStatus.valueOf(rs.getString("status")))
+                        .build();
+
             }
             return  null;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
+
 
     @Override
     public List<Order> findActive() {
@@ -71,11 +73,12 @@ public class OrderRepositoryImpl implements OrderRepository {
              ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
-                orders.add(new Order(
-                        rs.getInt("id"),
-                        rs.getInt("customer_id"),
-                        OrderStatus.valueOf(rs.getString("status"))
-                ));
+                orders.add(Order.builder()
+                        .id(rs.getInt("id"))
+                        .customerId(rs.getInt("customer_id"))
+                        .status(OrderStatus.valueOf(rs.getString("status")))
+                        .build());
+
             }
             return orders;
         } catch (SQLException e) {

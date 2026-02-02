@@ -69,4 +69,10 @@ public class OrderService {
         getOrderOrThrow(orderId);
         return orderItemRepo.calculateTotal(orderId);
     }
+
+    public double calculateTotalWithTax(int orderId) {
+        double baseTotal = calculateTotal(orderId);
+        double taxRate = TaxConfig.getInstance().getTaxRate();
+        return baseTotal * (1 + taxRate);
+    }
 }

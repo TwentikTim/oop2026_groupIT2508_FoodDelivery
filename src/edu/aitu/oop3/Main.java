@@ -11,6 +11,7 @@ import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
 import edu.aitu.oop3.service.PaymentService;
+import edu.aitu.oop3.service.TaxConfig;
 
 import java.util.List;
 import java.util.Scanner;
@@ -118,11 +119,11 @@ public class Main {
                 int next = readInt(sc);
 
                 if (next == 5) {
-                    double total = orderService.calculateTotal(orderId);
+                    double totalWithTax = orderService.calculateTotalWithTax(orderId);
                     System.out.println("Order waiting for payment.");
                     System.out.println("Your order ID: " + orderId);
                     System.out.println("Status:" + OrderStatus.PENDING_PAYMENT);
-                    System.out.println("Total price: " + total);
+                    System.out.println("Total price: " + totalWithTax);
                     System.out.println("Use 3 to add money and menu 4 to pay");
                     return;
                 }
@@ -184,11 +185,12 @@ public class Main {
 
         try {
             Order order = orderService.getOrderOrThrow(orderId);
-            double total = orderService.calculateTotal(orderId);
 
-            System.out.println("Total price: " + total);
+            double finalPrice = orderService.calculateTotalWithTax(orderId);
 
-            paymentService.pay(order, total);
+            System.out.println("Total price with tax: " + finalPrice);
+
+            paymentService.pay(order, finalPrice);
             System.out.println("Payment successful. Order placed");
             System.out.println("Current Status:" + OrderStatus.COOKING);
         } catch (OrderNotFoundException e) {
