@@ -21,7 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        IDB db = new DatabaseConnection();
+        IDB db = DatabaseConnection.getInstance();
 
         CustomerRepository customerRepo = new CustomerRepositoryImpl(db);
         MenuItemRepository menuRepo = new MenuItemRepositoryImpl(db);
