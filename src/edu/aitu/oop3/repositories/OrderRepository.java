@@ -5,7 +5,6 @@ import edu.aitu.oop3.entities.OrderStatus;
 
 import java.util.List;
 
-
 public interface OrderRepository {
 
     int create(int customerId);

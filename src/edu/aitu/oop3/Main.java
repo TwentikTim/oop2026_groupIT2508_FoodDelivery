@@ -6,11 +6,11 @@ import edu.aitu.oop3.entities.Customer;
 import edu.aitu.oop3.entities.MenuItem;
 import edu.aitu.oop3.entities.Order;
 import edu.aitu.oop3.entities.OrderStatus;
+import edu.aitu.oop3.exceptions.InsufficientBalanceException;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
 import edu.aitu.oop3.service.PaymentService;
-import edu.aitu.oop3.util.Result;
 
 import java.util.List;
 import java.util.Scanner;
@@ -194,11 +194,11 @@ public class Main {
         } catch (OrderNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Not enough balance.");
+            System.out.println("Database error. Try again.");
         }
     }
 
-//AdminMenu
+
     private static void adminMenu(
             Scanner sc,
             MenuItemRepository menuRepo,
@@ -250,36 +250,27 @@ public class Main {
                 }
 
                 case 3 -> {
-                    Result<List<Order>> result = orderService.getActiveOrders();
-
-                    if (result.isSuccess()) {
-                        List<Order> orders = result.getData();
+                    try {
+                        List<Order> orders = orderService.getActiveOrders();
                         if (orders.isEmpty()) {
-                            System.out.println("No active orders.");
+                            System.out.println("There is no active orders");
                         } else {
-                            for (Order o : orders){
+                            for (Order o : orders) {
                                 System.out.println(
-                                        "Order Id: " + o.getId() +
+                                        "Order ID: " + o.getId() +
                                                 ", Customer ID: " + o.getCustomerId() +
                                                 ", Status: " + o.getStatus()
                                 );
                             }
                         }
-                    } else {
-                        System.out.println(result.getError());
+                    } catch (RuntimeException e) {
+                        System.out.println("Database error. Try again.");
                     }
                 }
 
                 case 4 -> {
                     try {
-                        Result<List<Order>> activeResult = orderService.getActiveOrders();
-
-                        if (!activeResult.isSuccess()) {
-                            System.out.println(activeResult.getError());
-                            continue;
-                        }
-
-                        List<Order> active = activeResult.getData();
+                        List<Order> active = orderService.getActiveOrders();
                         if (active.isEmpty()) {
                             System.out.println("There is no order at the time");
                             continue;
@@ -296,7 +287,7 @@ public class Main {
                             }
                         }
                         if (!exists) {
-                            System.out.println("Order with this ID does not exist.");
+                            System.out.println("There is no order at the time");
                             continue;
                         }
 
