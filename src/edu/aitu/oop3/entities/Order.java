@@ -4,6 +4,8 @@ public class Order {
     private final int id;
     private final int customerId;
     private final OrderStatus status;
+    private double taxRate;
+
 
     private Order(Builder builder) {
         this.id = builder.id;
