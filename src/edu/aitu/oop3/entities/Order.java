@@ -4,6 +4,8 @@ public class Order {
     private final int id;
     private final int customerId;
     private final OrderStatus status;
+    private double taxRate;
+
 
     private Order(Builder builder) {
         this.id = builder.id;
@@ -31,6 +33,7 @@ public class Order {
         private int id;
         private int customerId;
         private OrderStatus status;
+        public double taxRate;
 
         public Builder id(int id) {
             this.id = id;
@@ -52,6 +55,10 @@ public class Order {
                 throw new IllegalStateException("customerId must be set.");
             }
             return new Order(this);
+        }
+        public Builder taxRate(double taxRate) {
+            this.taxRate = taxRate;
+            return this;
         }
     }
 

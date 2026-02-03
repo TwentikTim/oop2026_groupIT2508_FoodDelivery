@@ -29,6 +29,7 @@ public class OrderService {
     }
 
     public int createOrder(int customerId) {
+        Order order = OrderFactory.createNewOrder(customerId);
         return orderRepo.create(customerId);
     }
 
