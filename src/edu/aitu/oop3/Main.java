@@ -6,12 +6,10 @@ import edu.aitu.oop3.entities.Customer;
 import edu.aitu.oop3.entities.MenuItem;
 import edu.aitu.oop3.entities.Order;
 import edu.aitu.oop3.entities.OrderStatus;
-import edu.aitu.oop3.exceptions.InsufficientBalanceException;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
 import edu.aitu.oop3.service.PaymentService;
-import edu.aitu.oop3.service.TaxConfig;
 
 import java.util.List;
 import java.util.Scanner;
@@ -196,6 +194,7 @@ public class Main {
         } catch (OrderNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (RuntimeException e) {
+            e.printStackTrace();
             System.out.println("Database error. Try again.");
         }
     }

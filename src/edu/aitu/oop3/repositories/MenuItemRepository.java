@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface MenuItemRepository {
     List<MenuItem> findAll();
-    MenuItem findById(int id);
+    MenuItem findById(Integer id);
     void updateAvailability(int id, boolean available);
 }

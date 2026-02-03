@@ -2,7 +2,7 @@ package edu.aitu.oop3.service;
 
 
 import edu.aitu.oop3.entities.Order;
-import edu.aitu.oop3.entities.OrderStatus; // Добавлен импорт для OrderStatus
+import edu.aitu.oop3.entities.OrderStatus;
 import edu.aitu.oop3.exceptions.InsufficientBalanceException;
 import edu.aitu.oop3.repositories.CustomerRepository;
 import edu.aitu.oop3.repositories.OrderRepository;
@@ -25,7 +25,7 @@ public class PaymentService {
     public void pay(Order order, double finalPriceWithTax) {
 
         double balance = customerRepo.getBalance(order.getCustomerId());
-        if (balance < finalPriceWithTax) { //
+        if (balance < finalPriceWithTax) {
             throw new InsufficientBalanceException(balance, finalPriceWithTax);
         }
 

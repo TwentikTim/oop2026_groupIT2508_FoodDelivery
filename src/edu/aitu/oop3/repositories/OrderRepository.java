@@ -5,11 +5,9 @@ import edu.aitu.oop3.entities.OrderStatus;
 
 import java.util.List;
 
-public interface OrderRepository {
+public interface OrderRepository extends Repository<Order, Integer> {
 
     int create(int customerId);
-
-    Order findById(int id);
 
     List<Order> findActive();
 
