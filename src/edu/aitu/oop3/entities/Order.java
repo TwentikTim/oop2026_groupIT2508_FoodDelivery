@@ -56,6 +56,10 @@ public class Order {
             }
             return new Order(this);
         }
+        public Builder taxRate(double taxRate) {
+            this.taxRate = taxRate;
+            return this;
+        }
     }
 
 }
