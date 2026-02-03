@@ -31,6 +31,7 @@ public class Order {
         private int id;
         private int customerId;
         private OrderStatus status;
+        public double taxRate;
 
         public Builder id(int id) {
             this.id = id;
