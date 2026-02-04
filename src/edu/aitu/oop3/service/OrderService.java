@@ -1,7 +1,7 @@
 package edu.aitu.oop3.service;
 
 import edu.aitu.oop3.entities.MenuItem;
-import edu.aitu.oop3.entities.Order;
+import edu.aitu.oop3.entities.OrderInterface;
 import edu.aitu.oop3.entities.OrderStatus;
 import edu.aitu.oop3.exceptions.InvalidQuantityException;
 import edu.aitu.oop3.exceptions.MenuItemNotAvailableException;
@@ -28,9 +28,8 @@ public class OrderService {
         this.orderItemRepo = orderItemRepo;
     }
 
-    public int createOrder(int customerId) {
-        Order order = OrderFactory.createNewOrder(customerId);
-        return orderRepo.create(customerId);
+    public int createOrder(int customerId, String orderType, String address) {
+        return orderRepo.create(customerId, orderType, address);
     }
 
     public void addItemToOrder(int orderId, int menuItemId, int quantity) {
@@ -39,19 +38,19 @@ public class OrderService {
 
         MenuItem item = menuRepo.findById(menuItemId);
         if (item == null || !item.isAvailable()) {
-            throw new MenuItemNotAvailableException(item == null ? "Unknown item" : item.getName());
+            throw new MenuItemNotAvailableException(item == null ? "This item is available." : item.getName());
         }
 
         orderItemRepo.add(orderId, menuItemId, quantity);
     }
 
     public OrderStatus getStatus(int orderId) {
-        Order order = orderRepo.findById(orderId);
+        OrderInterface order = orderRepo.findById(orderId);
         if (order == null) throw new OrderNotFoundException(orderId);
         return order.getStatus();
     }
 
-    public List<Order> getActiveOrders() {
+    public List<OrderInterface> getActiveOrders() {
         return orderRepo.findActive();
     }
 
@@ -60,8 +59,8 @@ public class OrderService {
         orderRepo.updateStatus(orderId, status);
     }
 
-    public Order getOrderOrThrow(int orderId) {
-        Order o = orderRepo.findById(orderId);
+    public OrderInterface getOrderOrThrow(int orderId) {
+        OrderInterface o = orderRepo.findById(orderId);
         if (o == null) throw new OrderNotFoundException(orderId);
         return o;
     }

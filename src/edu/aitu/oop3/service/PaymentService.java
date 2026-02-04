@@ -2,6 +2,7 @@ package edu.aitu.oop3.service;
 
 
 import edu.aitu.oop3.entities.Order;
+import edu.aitu.oop3.entities.OrderInterface;
 import edu.aitu.oop3.entities.OrderStatus;
 import edu.aitu.oop3.exceptions.InsufficientBalanceException;
 import edu.aitu.oop3.repositories.CustomerRepository;
@@ -17,12 +18,12 @@ public class PaymentService {
         this.orderRepo = orderRepo;
     }
 
-    public void addMoneyByOrderId(Order order, double amount) {
+    public void addMoneyByOrderId(OrderInterface order, double amount) {
         if (amount <= 0) throw new IllegalArgumentException("Invalid amount");
         customerRepo.addBalance(order.getCustomerId(), amount);
     }
 
-    public void pay(Order order, double finalPriceWithTax) {
+    public void pay(OrderInterface order, double finalPriceWithTax) {
 
         double balance = customerRepo.getBalance(order.getCustomerId());
         if (balance < finalPriceWithTax) {

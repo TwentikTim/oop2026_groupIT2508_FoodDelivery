@@ -1,15 +1,15 @@
 package edu.aitu.oop3.repositories;
 
-import edu.aitu.oop3.entities.Order;
+import edu.aitu.oop3.entities.OrderInterface;
 import edu.aitu.oop3.entities.OrderStatus;
 
 import java.util.List;
 
-public interface OrderRepository extends Repository<Order, Integer> {
+public interface OrderRepository extends Repository<OrderInterface, Integer> {
 
-    int create(int customerId);
+    int create(int customerId, String orderType, String address);
 
-    List<Order> findActive();
+    List<OrderInterface> findActive();
 
     void updateStatus(int id, OrderStatus status);
 }

@@ -2,10 +2,7 @@ package edu.aitu.oop3;
 
 import edu.aitu.oop3.db.DatabaseConnection;
 import edu.aitu.oop3.db.IDB;
-import edu.aitu.oop3.entities.Customer;
-import edu.aitu.oop3.entities.MenuItem;
-import edu.aitu.oop3.entities.Order;
-import edu.aitu.oop3.entities.OrderStatus;
+import edu.aitu.oop3.entities.*;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
 import edu.aitu.oop3.repositories.*;
 import edu.aitu.oop3.service.OrderService;
@@ -49,7 +46,7 @@ public class Main {
                 case 2 -> checkStatus(sc, orderService);
                 case 3 -> addMoney(sc, orderService,paymentService);
                 case 4 -> payOrder(sc, orderService, paymentService);
-                case 5 -> adminMenu(sc, menuRepo, orderService);
+                case 5 -> adminMenu(sc, menuRepo, orderService, customerRepo, orderRepo);
                 case 0 -> {
                     System.out.println("Goodbye.");
                     return;
@@ -74,14 +71,35 @@ public class Main {
             return;
         }
 
+        System.out.println("Choose order type:");
+        System.out.println("1. Pickup");
+        System.out.println("2. Delivery");
+        System.out.print("Enter choice: ");
+        int typeChoice = readInt(sc);
+
+        String orderType;
+        String address = null;
+        if (typeChoice == 1) {
+            orderType = "pickup";
+        } else if (typeChoice == 2) {
+            orderType = "delivery";
+            System.out.print("Enter address: ");
+            address = sc.nextLine();
+        } else {
+            System.out.println("Invalid choice. Defaulting to pickup.");
+            orderType = "pickup";
+        }
+
         int customerId = customerRepo.create(new Customer(name));
-        int orderId = orderService.createOrder(customerId);
+        int orderId = orderService.createOrder(customerId, orderType, address);
+
 
         Integer currentItemId = null;
 
         while (true) {
 
-            if (currentItemId == null) {
+
+         if (currentItemId == null) {
                 showMenu(menuRepo);
                 System.out.print("Choose item: ");
                 int chosen = readInt(sc);
@@ -159,7 +177,7 @@ public class Main {
         int orderId = readInt(sc);
 
         try {
-            Order order = orderService.getOrderOrThrow(orderId);
+            OrderInterface order = orderService.getOrderOrThrow(orderId);
 
             System.out.println("Enter amount: ");
             double amount = readDouble(sc);
@@ -182,7 +200,7 @@ public class Main {
         int orderId = readInt(sc);
 
         try {
-            Order order = orderService.getOrderOrThrow(orderId);
+            OrderInterface order = orderService.getOrderOrThrow(orderId);
 
             double finalPrice = orderService.calculateTotalWithTax(orderId);
 
@@ -199,11 +217,13 @@ public class Main {
         }
     }
 
-
+//AdminMenu
     private static void adminMenu(
             Scanner sc,
             MenuItemRepository menuRepo,
-            OrderService orderService
+            OrderService orderService,
+            CustomerRepository customerRepo,
+            OrderRepository orderRepo
     ) {
         System.out.print("Enter admin password: ");
         String pass = sc.next();
@@ -217,8 +237,9 @@ public class Main {
             System.out.println("\nAdmin Menu");
             System.out.println("1. View menu items");
             System.out.println("2. Change menu item availability");
-            System.out.println("3. View active orders");
+            System.out.println("3. View all orders");
             System.out.println("4. Update order status");
+            System.out.println("5. View all customers");
             System.out.println("0. Back");
             System.out.print("Enter: ");
 
@@ -252,16 +273,13 @@ public class Main {
 
                 case 3 -> {
                     try {
-                        List<Order> orders = orderService.getActiveOrders();
-                        if (orders.isEmpty()) {
-                            System.out.println("There is no active orders");
+                        List<OrderInterface> allOrders = orderRepo.findAll();
+                        if (allOrders.isEmpty()) {
+                            System.out.println("There is no orders in the database.");
                         } else {
-                            for (Order o : orders) {
-                                System.out.println(
-                                        "Order ID: " + o.getId() +
-                                                ", Customer ID: " + o.getCustomerId() +
-                                                ", Status: " + o.getStatus()
-                                );
+                            for (OrderInterface o : allOrders) {
+                                System.out.printf("Order ID: %d, Cust ID: %d, Status: %s, Type: %s%n",
+                                        o.getId(), o.getCustomerId(), o.getStatus(), o.getClass().getSimpleName());
                             }
                         }
                     } catch (RuntimeException e) {
@@ -271,7 +289,7 @@ public class Main {
 
                 case 4 -> {
                     try {
-                        List<Order> active = orderService.getActiveOrders();
+                        List<OrderInterface> active = orderService.getActiveOrders();
                         if (active.isEmpty()) {
                             System.out.println("There is no order at the time");
                             continue;
@@ -281,14 +299,14 @@ public class Main {
                         int orderId = readInt(sc);
 
                         boolean exists = false;
-                        for (Order o : active) {
+                        for (OrderInterface o : active) {
                             if (o.getId() == orderId) {
                                 exists = true;
                                 break;
                             }
                         }
                         if (!exists) {
-                            System.out.println("There is no order at the time");
+                            System.out.println("Order with such ID was not found");
                             continue;
                         }
 
@@ -315,7 +333,26 @@ public class Main {
                         System.out.println("Status updated.");
 
                     } catch (OrderNotFoundException e) {
-                        System.out.println("There is no order at the time");
+                        System.out.println("Order not found.");
+                    } catch (RuntimeException e) {
+                        System.out.println("Database error. Try again.");
+                    }
+                }
+
+                case 5 -> {
+                    try{
+                        List<Customer> customers = customerRepo.findAll();
+                        if (customers.isEmpty()) {
+                            System.out.println("There is no customers in the database");
+                        } else {
+                            for (Customer c : customers) {
+                                System.out.println("Customer ID: " + c.getId() +
+                                                   ", Name: " + c.getName() +
+                                                   ", Balance: " + c.getBalance()
+                                );
+
+                            }
+                        }
                     } catch (RuntimeException e) {
                         System.out.println("Database error. Try again.");
                     }

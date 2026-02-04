@@ -21,7 +21,11 @@ public class CustomerRepositoryImpl extends BaseRepository<Customer, Integer> im
 
     private final RowMapper<Double> balanceMapper = rs -> rs.getDouble("balance");
 
-
+    @Override
+    public List<Customer> findAll(){
+        String sql = "SELECT * FROM customers ORDER BY id";
+        return query(sql, customerMapper);
+    }
     @Override
     public int create(Customer customer) {
         String sql = "INSERT INTO customers(name, balance) VALUES (?, 0) RETURNING id";
