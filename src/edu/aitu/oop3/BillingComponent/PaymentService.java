@@ -1,12 +1,11 @@
-package edu.aitu.oop3.service;
+package edu.aitu.oop3.BillingComponent;
 
 
-import edu.aitu.oop3.entities.Order;
-import edu.aitu.oop3.entities.OrderInterface;
-import edu.aitu.oop3.entities.OrderStatus;
+import edu.aitu.oop3.OrderingComponent.OrderInterface;
+import edu.aitu.oop3.OrderingComponent.OrderStatus;
 import edu.aitu.oop3.exceptions.InsufficientBalanceException;
-import edu.aitu.oop3.repositories.CustomerRepository;
-import edu.aitu.oop3.repositories.OrderRepository;
+import edu.aitu.oop3.CustomerComponent.CustomerRepository;
+import edu.aitu.oop3.OrderingComponent.OrderRepository;
 
 public class PaymentService {
 

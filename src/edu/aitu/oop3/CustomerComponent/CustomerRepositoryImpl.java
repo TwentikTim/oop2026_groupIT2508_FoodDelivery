@@ -1,7 +1,8 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.CustomerComponent;
 
 import edu.aitu.oop3.db.IDB;
-import edu.aitu.oop3.entities.Customer;
+import edu.aitu.oop3.DataComponent.BaseRepository;
+import edu.aitu.oop3.DataComponent.RowMapper;
 
 import java.sql.SQLException;
 import java.util.List;

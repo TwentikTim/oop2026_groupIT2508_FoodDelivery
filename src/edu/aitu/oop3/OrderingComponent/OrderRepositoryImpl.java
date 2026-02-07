@@ -1,11 +1,9 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.OrderingComponent;
 
 import edu.aitu.oop3.db.IDB;
-import edu.aitu.oop3.entities.OrderInterface;
-import edu.aitu.oop3.entities.OrderStatus;
-import edu.aitu.oop3.factory.OrderFactory; // Импортируем нашу фабрику
+import edu.aitu.oop3.DataComponent.BaseRepository;
+import edu.aitu.oop3.DataComponent.RowMapper;
 
-import java.sql.*;
 import java.util.List;
 
 public class OrderRepositoryImpl extends BaseRepository<OrderInterface, Integer> implements OrderRepository {

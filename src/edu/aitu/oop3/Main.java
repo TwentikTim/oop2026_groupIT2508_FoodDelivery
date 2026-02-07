@@ -1,12 +1,16 @@
 package edu.aitu.oop3;
 
+import edu.aitu.oop3.CustomerComponent.Customer;
+import edu.aitu.oop3.CustomerComponent.CustomerRepository;
+import edu.aitu.oop3.CustomerComponent.CustomerRepositoryImpl;
+import edu.aitu.oop3.MenuComponent.MenuItem;
+import edu.aitu.oop3.MenuComponent.MenuItemRepository;
+import edu.aitu.oop3.MenuComponent.MenuItemRepositoryImpl;
+import edu.aitu.oop3.OrderingComponent.*;
 import edu.aitu.oop3.db.DatabaseConnection;
 import edu.aitu.oop3.db.IDB;
-import edu.aitu.oop3.entities.*;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
-import edu.aitu.oop3.repositories.*;
-import edu.aitu.oop3.service.OrderService;
-import edu.aitu.oop3.service.PaymentService;
+import edu.aitu.oop3.BillingComponent.PaymentService;
 
 import java.util.List;
 import java.util.Scanner;

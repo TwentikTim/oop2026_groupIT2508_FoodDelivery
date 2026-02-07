@@ -1,14 +1,11 @@
-package edu.aitu.oop3.service;
+package edu.aitu.oop3.OrderingComponent;
 
-import edu.aitu.oop3.entities.MenuItem;
-import edu.aitu.oop3.entities.OrderInterface;
-import edu.aitu.oop3.entities.OrderStatus;
+import edu.aitu.oop3.MenuComponent.MenuItem;
 import edu.aitu.oop3.exceptions.InvalidQuantityException;
 import edu.aitu.oop3.exceptions.MenuItemNotAvailableException;
 import edu.aitu.oop3.exceptions.OrderNotFoundException;
-import edu.aitu.oop3.repositories.MenuItemRepository;
-import edu.aitu.oop3.repositories.OrderItemRepository;
-import edu.aitu.oop3.repositories.OrderRepository;
+import edu.aitu.oop3.MenuComponent.MenuItemRepository;
+import edu.aitu.oop3.BillingComponent.TaxConfig;
 
 import java.util.List;
 

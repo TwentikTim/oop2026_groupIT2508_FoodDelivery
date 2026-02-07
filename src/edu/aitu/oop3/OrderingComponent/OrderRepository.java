@@ -1,7 +1,6 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.OrderingComponent;
 
-import edu.aitu.oop3.entities.OrderInterface;
-import edu.aitu.oop3.entities.OrderStatus;
+import edu.aitu.oop3.DataComponent.Repository;
 
 import java.util.List;
 

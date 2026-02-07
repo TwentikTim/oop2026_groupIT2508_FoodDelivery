@@ -1,6 +1,7 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.DataComponent;
 
 import edu.aitu.oop3.db.IDB;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

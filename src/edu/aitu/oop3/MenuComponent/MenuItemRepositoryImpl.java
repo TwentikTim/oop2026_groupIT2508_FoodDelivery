@@ -1,7 +1,9 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.MenuComponent;
 
 import edu.aitu.oop3.db.IDB;
-import edu.aitu.oop3.entities.MenuItem;
+import edu.aitu.oop3.DataComponent.BaseRepository;
+import edu.aitu.oop3.DataComponent.RowMapper;
+
 import java.util.List;
 
 

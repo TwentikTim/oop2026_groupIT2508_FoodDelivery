@@ -1,6 +1,6 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.CustomerComponent;
 
-import edu.aitu.oop3.entities.Customer;
+import edu.aitu.oop3.DataComponent.Repository;
 
 public interface CustomerRepository extends Repository<Customer, Integer> {
     int create(Customer customer);

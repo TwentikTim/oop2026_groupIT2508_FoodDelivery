@@ -1,10 +1,5 @@
-package edu.aitu.oop3.factory;
+package edu.aitu.oop3.OrderingComponent;
 
-import edu.aitu.oop3.entities.Order;
-import edu.aitu.oop3.entities.OrderInterface;
-import edu.aitu.oop3.entities.DeliveryOrder;
-import edu.aitu.oop3.entities.PickupOrder;
-import edu.aitu.oop3.entities.OrderStatus;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

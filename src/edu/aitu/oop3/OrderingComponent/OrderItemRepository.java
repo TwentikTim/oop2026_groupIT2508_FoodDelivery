@@ -1,4 +1,4 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.OrderingComponent;
 
 public interface OrderItemRepository {
     void add(int orderId, int menuItemId, int quantity);

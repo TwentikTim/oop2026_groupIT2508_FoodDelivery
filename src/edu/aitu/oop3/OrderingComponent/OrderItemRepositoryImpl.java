@@ -1,4 +1,4 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.OrderingComponent;
 
 import edu.aitu.oop3.db.IDB;
 import java.sql.Connection;
@@ -44,7 +44,7 @@ public class OrderItemRepositoryImpl implements OrderItemRepository {
             ps.setInt(1, orderId);
             ResultSet rs = ps.executeQuery();
             rs.next();
-            return rs.getDouble("total");
+            return rs.getDouble("total:");
         }  catch (SQLException e) {
             throw new RuntimeException("Failed to calculate total", e);
         }

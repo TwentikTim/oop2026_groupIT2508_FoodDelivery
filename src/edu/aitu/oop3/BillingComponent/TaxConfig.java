@@ -1,4 +1,4 @@
-package edu.aitu.oop3.service;
+package edu.aitu.oop3.BillingComponent;
 
 public class TaxConfig {
 

@@ -1,15 +1,18 @@
-package edu.aitu.oop3.entities;
+package edu.aitu.oop3.OrderingComponent;
 
-public class PickupOrder implements OrderInterface {
+public class DeliveryOrder implements OrderInterface {
     private final int id;
     private final int customerId;
     private final OrderStatus status;
+    private final String deliveryAddress;
 
-    public PickupOrder(int id, int customerId, OrderStatus status) {
+    public DeliveryOrder(int id, int customerId, OrderStatus status, String deliveryAddress) {
         this.id = id;
         this.customerId = customerId;
         this.status = status;
+        this.deliveryAddress = deliveryAddress;
     }
+
 
     @Override
     public int getId() { return id; }
@@ -20,9 +23,10 @@ public class PickupOrder implements OrderInterface {
 
     @Override
     public String toString() {
-        return "PickupOrder{" +
+        return "DeliveryOrder{" +
                 "id=" + id +
                 ", status=" + status +
+                ", address='" + deliveryAddress + '\'' +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package edu.aitu.oop3.entities;
+package edu.aitu.oop3.OrderingComponent;
 
 public class Order implements OrderInterface {
     private final int id;

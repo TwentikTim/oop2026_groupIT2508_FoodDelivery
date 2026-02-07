@@ -1,4 +1,4 @@
-package edu.aitu.oop3.repositories;
+package edu.aitu.oop3.DataComponent;
 
 
 import java.util.List;
