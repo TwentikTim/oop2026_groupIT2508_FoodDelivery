@@ -87,6 +87,7 @@ public class Main {
             orderType = "pickup";
         } else if (typeChoice == 2) {
             orderType = "delivery";
+            sc.nextLine();
             System.out.print("Enter address: ");
             address = sc.nextLine();
         } else {
@@ -386,7 +387,6 @@ public class Main {
     private static int readInt(Scanner sc) {
         while (!sc.hasNextInt()) {
             sc.next();
-            System.out.print("Enter a number: ");
         }
         return sc.nextInt();
     }
@@ -394,7 +394,6 @@ public class Main {
     private static double readDouble(Scanner sc) {
         while (!sc.hasNextDouble()) {
             sc.next();
-            System.out.println("Enter a number: ");
         }
         return sc.nextDouble();
     }
