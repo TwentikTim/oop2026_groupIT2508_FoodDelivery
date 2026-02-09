@@ -20,6 +20,8 @@ public class DeliveryOrder implements OrderInterface {
     public int getCustomerId() { return customerId; }
     @Override
     public OrderStatus getStatus() { return status; }
+    @Override
+    public String getDeliveryAddress() { return deliveryAddress; }
 
     @Override
     public String toString() {

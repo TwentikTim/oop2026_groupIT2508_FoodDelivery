@@ -20,9 +20,9 @@ public class Order implements OrderInterface {
         return customerId;
     }
 
-    public OrderStatus getStatus() {
-        return status;
-    }
+    public OrderStatus getStatus() {return status;}
+
+    public String getDeliveryAddress() {return null;}
 
     public static Builder builder() {
         return new Builder();

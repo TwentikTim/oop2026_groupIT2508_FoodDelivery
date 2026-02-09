@@ -283,8 +283,9 @@ public class Main {
                             System.out.println("There is no orders in the database.");
                         } else {
                             for (OrderInterface o : allOrders) {
-                                System.out.printf("Order ID: %d, Cust ID: %d, Status: %s, Type: %s%n",
-                                        o.getId(), o.getCustomerId(), o.getStatus(), o.getClass().getSimpleName());
+                                System.out.printf("Order ID: %d, Cust ID: %d, Status: %s, Type: %s%n, Address: %s%n",
+                                        o.getId(), o.getCustomerId(), o.getStatus(), o.getClass().getSimpleName(), (o.getDeliveryAddress()== null ? "-" : o.getDeliveryAddress())
+                                );
                             }
                         }
                     } catch (RuntimeException e) {
@@ -318,6 +319,7 @@ public class Main {
                         System.out.println("1. COOKING");
                         System.out.println("2. ON_THE_WAY");
                         System.out.println("3. DELIVERED");
+                        System.out.println("4. READY");
                         System.out.print("Choose status: ");
 
                         int s = readInt(sc);
@@ -326,6 +328,7 @@ public class Main {
                             case 1 -> OrderStatus.COOKING;
                             case 2 -> OrderStatus.ON_THE_WAY;
                             case 3 -> OrderStatus.DELIVERED;
+                            case 4 -> OrderStatus.READY;
                             default -> null;
                         };
 

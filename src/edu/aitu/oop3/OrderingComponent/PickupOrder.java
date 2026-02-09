@@ -17,6 +17,8 @@ public class PickupOrder implements OrderInterface {
     public int getCustomerId() { return customerId; }
     @Override
     public OrderStatus getStatus() { return status; }
+    @Override
+    public String getDeliveryAddress() {return null;}
 
     @Override
     public String toString() {
